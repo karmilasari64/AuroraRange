@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Latihan DOM</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" 
+    integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand">Mini Ecommerce</a>
+            <form class="form-inline" id="formItem">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" id="keyword" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="searchItem">Search</button>
+            </form>
+            <button class="btn btn-primary" id="cart"><i class="fas fa-shopping-cart"></i> (0)</button>
+        </nav>
+        <div class="row">
+            <div class="row col-md-12 mt-2" id="listBarang">
+                <!-- List of products will be added dynamically here -->
+            </div>
+        </div>
+        <div class="row mt-3" id="cartItems">
+            <!-- Cart will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Product data
+        const items = [
+            ['001', 'GlowPink MechaSet', 259350, 'keybord gaming wanita dengan warna yang lucu', 'GlowPink MechaSet.png'], 
+            ['002', 'Cute Pink Gaming Keyboard', 199000, 'keybord gaming perempuan cute pink', 'Cute Pink Gaming Keyboard.png'],
+            ['003', 'Mouse Miniso', 100000, 'Miniso Mouse Wireless Silent Fashion Mouse', 'Mouse Miniso.png'],
+            ['004', 'Mouse Baseus F01B', 185000, 'Baseus Mouse USB Wireless F01B Tri Mode', 'Mouse Baseus F01B.png']
+        ];
+
+        let cart = [];
+        // Function to render products
+        function renderProducts(products) {
+            const listBarang = document.getElementById('listBarang');
+            listBarang.innerHTML = '';  // Clear existing products
+
+            products.forEach(item => {
+                const [id, name, price, desc, img] = item;
+                const productCard = `
+                    <div class="col-4 mt-2">
+                        <div class="card" style="width: 18rem;">
+                            <img src="${img}" class="card-img-top" height="200px" width="200px" alt="${name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${name}</h5>
+                                <p class="card-text">${desc}</p>
+                                <p class="card-text">Rp ${price}</p>
+                                <a href="#" class="btn btn-primary" onclick="addToCart('${id}')">Tambahkan ke keranjang</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listBarang.innerHTML += productCard;
+            });
+        }
+
+        // Function to handle add to cart
+        function addToCart(id) {
+            const product = items.find(item => item[0] === id);
+            if (!product) return;
+            cart.push(product);
+
+            updateCartCount();
+            renderCart();
+        }
+
+        // Function to render cart
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            cart.forEach((item, index) => {
+                const [id, name, price, desc, img] = item;
+                const cartItem = `
+                    <div class="col-12 mt-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${name}</h5>
+                                <p class="card-text">Rp ${price}</p>
+                                <button class="btn btn-danger" onclick="removeFromCart(${index})">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cartItems.innerHTML += cartItem;
+            });
+        }
+
+        // Function to handle remove from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        // Function to update the cart count in the navbar
+        function updateCartCount() {
+            document.getElementById('cart').innerHTML = `<i class="fas fa-shopping-cart"></i> (${cart.length})`;
+        }
+
+        // Event listener for search functionality
+        document.getElementById('formItem').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const keyword = document.getElementById('keyword').value.toLowerCase();
+            const filteredItems = items.filter(item => item[1].toLowerCase().includes(keyword));
+            renderProducts(filteredItems);
+        });
+
+        // Initial render of products
+        renderProducts(items);
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
